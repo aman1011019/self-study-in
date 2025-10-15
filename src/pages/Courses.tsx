@@ -3,15 +3,21 @@ import { Header } from "@/components/Header";
 import { CourseCard } from "@/components/CourseCard";
 import { CourseFilters } from "@/components/CourseFilters";
 import { courses } from "@/data/courses";
+import { useSearch } from "@/contexts/SearchContext";
 
 const Courses = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [difficultyFilter, setDifficultyFilter] = useState("all");
+  const { searchQuery } = useSearch();
 
   const filteredCourses = courses.filter((course) => {
     const matchesCategory = categoryFilter === "all" || course.category === categoryFilter;
     const matchesDifficulty = difficultyFilter === "all" || course.difficulty === difficultyFilter;
-    return matchesCategory && matchesDifficulty;
+    const matchesSearch = searchQuery === "" || 
+      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesDifficulty && matchesSearch;
   });
 
   return (
